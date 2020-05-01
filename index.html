@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>API-first Development</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+
+      h1, h2, h3, h4 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: 400;
+        margin-bottom: 0;
+        margin-top: 10px;
+      }
+      h1 { font-size: 30px; }
+      h2 { font-size: 3em; }
+      h3 { font-size: 1.6em; }
+
+      .inverse {
+        background: #272822;
+        color: #777872;
+        text-shadow: 0 0 20px #333;
+      }
+
+      .inverse h1, .inverse h2 {
+        color: #f3f3f3;
+        line-height: 0.8em;
+      }
+
+      pre {
+        border-left: 0.4em solid #d7d7d7;
+        padding: 1em !important;
+      }
+
+      code {
+        background: transparent !important;
+      }
+
+      a {
+        color: #F92672;
+        text-decoration: none;
+      }
+
+      .task {
+        float: right;
+        font-size: 0.9em;
+        padding-top: 0.6em;
+      }
+
+      .task a {
+        color: #080;
+        text-decoration: none;
+      }
+
+      .right {
+        float: right;
+        margin-left: 1em;
+      }
+
+      .pushdown {
+        margin-top: 12em;
+      }
+
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+
+      .remark-slide-content h1 { font-size: 70px; }
+
+      ol {
+        line-height: 2.0em;
+      }
+
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle, inverse
+
+# API-first Application Development
+
+#### &nbsp;
+#### &nbsp;
+### Mohammad Emran Hasan
+### CTO, Devnet Limited
+### [@phpfour](http://twitter.com/phpfour)
+
+---
+
+# Agenda
+
+1. Introduction
+2. What is an API?
+3. API-first Development
+4. REST API Basics
+  - URL Structure
+  - HTTP Verbs
+  - Status Codes
+  - Versioning
+  - Sorting
+  - Filtering
+  - Searching
+  - Errors
+5. API Design Session
+6. Q&A
+
+---
+class: center, middle, inverse
+
+# What is an API ?
+
+---
+class: center, middle
+
+.center[![API](api.png)]
+
+> “a publicly available web-based URL that returns data, likely in JSON or XML”
+
+---
+
+# What is an API ?
+
+Two major use cases:
+
+1. Users can send a request detailing the information they want.
+2. Users can send a request alter data on the applications
+
+---
+
+# What is an API ?
+
+#### Request
+
+```
+GET https://api.github.com/users/phpfour
+```
+
+#### Response
+
+```json
+
+{
+  "id": 171715,
+  "login": "phpfour",
+  "avatar_url": "https://avatars1.githubusercontent.com/u/171715?v=4",
+  "url": "https://api.github.com/users/phpfour",
+  "html_url": "https://github.com/phpfour",
+  "name": "Mohammad Emran Hasan",
+  "blog": "http://phpfour.com",
+  "location": "Dhaka, Bangladesh",
+  "bio": "Symfony/Laravel Developer ",
+  "followers": 169,
+  "following": 20,
+  "created_at": "2009-12-24T09:35:26Z",
+  "updated_at": "2019-03-20T12:46:51Z"
+}
+
+```
+
+---
+
+# What is an API ?
+
+#### Request
+
+```json
+POST https://api.github.com/phpfour/repos
+
+{
+  "name": "Hello-World",
+  "description": "This is your first repository",
+  "private": false,
+  "has_issues": true
+}
+```
+
+#### Response
+
+```json
+Status: 201 Created
+
+{
+  "id": 1296269,
+  "node_id": "MDEwOlJlcG9zaXRvcnkxMjk2MjY5",
+  "name": "Hello-World",
+  "full_name": "octocat/Hello-World",
+  ...
+}
+
+```
+
+---
+class: center, middle, inverse
+
+# API-first Development
+
+---
+class: center, middle
+
+# Code-first Development
+
+.center[![API](code-first-approach.jpg)]
+
+---
+class: center, middle
+
+# API-first Development
+
+.center[![API](api-first-approach.jpg)]
+
+---
+
+# API-first Development
+
+- Building the API first as a specification, using any of the below specification:
+
+  - OpenAPI standard (OAS)
+  - ReDoc
+
+- Start early collaboration with API consumers, resulting in feedback
+
+- Test run API through mocking tools
+
+- API Consumers can carry on integration work while API development is ongoing
+
+---
+
+class: center, middle, inverse
+
+# REST API Basics
+
+---
+
+# REST API Basics
+
+Let's first set the base:
+
+- **Resource** is an object or representation of something, which has some associated data with it and there can be set of methods to operate on it.
+
+    Example: _employee, user, blogpost, etc_
+
+- **Collections** are set of resources, for example _**companies**_ is the collection of Company resource
+
+- **URL (Uniform Resource Locator)** is a path through which a resource can be located and some actions can be performed on it.
+
+    Example: `http://api.project.com/v1.0/users/1`
+
+---
+class: center, middle, inverse
+
+# URL Structure
+
+---
+
+# URL Structure
+
+- Resources should be **plural**, not singular
+
+    Good:
+    - `http://api.project.com/v1.0/users`
+    - `http://api.project.com/v1.0/employees/1`
+
+    Bad:
+    - `http://api.project.com/v1.0/blogposts`
+    - `http://api.project.com/v1.0/company/1`
+
+    Only exception when it is guranteed to have one resource:
+
+    - `http://api.project.com/v1.0/me`
+
+---
+
+# URL Structure
+
+- Use resource names (**nouns**), not _actions_ or _verbs_ in your URL
+
+    Good:
+    - `http://api.project.com/v1.0/users/1/messages`
+    - `http://api.project.com/v1.0/employees/1/roles`
+
+    Bad:
+    - `http://api.project.com/v1.0/getCompanies/1`
+    - `http://api.project.com/v1.0/users/1/sendMessage`
+
+---
+class: center, middle, inverse
+
+# HTTP Verbs
+
+---
+
+# HTTP Verbs
+
+HTTP has defined few sets of methods which indicates the type of action to be performed on the resources
+
+- **`GET`** - fetches one resource (or a collection of resouces), should not alter data or produce any side effect
+
+  - `GET /v1.0/users/1`
+  - `GET /v1.0/employees`
+  - `GET /v1.0/companies/xyz/jobs`
+  - `GET /v1.0/search/c4ca4238a0b923820dcc509a6f75849b/results`
+
+- **`POST`** - create a resource, connect multiple resource, initiate a process etc
+
+  - `POST /v1.0/users`
+  - `POST /v1.0/employees/1/suspend`
+  - `POST /v1.0/balance-transfer`
+
+---
+
+# HTTP Verbs
+
+HTTP has defined few sets of methods which indicates the type of action to be performed on the resources
+
+- **`PUT`** - update an entire resource, or create one if non-existant
+
+  - `PUT /v1.0/users/1`
+  - `PUT /v1.0/companies/xyz/jobs/senior-software-engineer`
+
+- **`DELETE`** - delete a resource, and/or dependent sub-resources
+
+  - `DELETE /v1.0/users/1`
+  - `DELETE /v1.0/companies/xyz/jobs/senior-software-engineer/applicants`
+
+---
+
+# HTTP Verbs
+
+HTTP has defined few sets of methods which indicates the type of action to be performed on the resources
+
+- **`PATCH`** - partial update of a resource, requests contain only the diff
+
+  - `PATCH /v1.0/users/1`
+
+    ```json
+    {
+      "locked": true
+    }
+    ```
+
+  - `PATCH /v1.0/companies/xyz/jobs/senior-software-engineer`
+
+    ```json
+    {
+      "published": true,
+      "publish_date": "2019-06-01 10:00:00"
+    }
+    ```
+---
+class: center, middle, inverse
+
+# Status Codes
+
+---
+
+# Status Codes
+
+HTTP status codes are bunch of standardized codes for various scenarios. The server should always return the right status code.
+
+- **2xx** (Success category)
+
+  These status codes represent that the requested action was received and successfully processed by the server.
+
+  - **200 OK**
+
+      The standard HTTP response for success in GET, PUT or POST.
+
+  - **201 Created**
+
+      Should be returned whenever a new instance is created
+
+  - **204 No Content**
+
+      Request is successfully processed, but don't have any content (`DELETE`)
+
+---
+
+# Status Codes
+
+HTTP status codes are bunch of standardized codes for various scenarios. The server should always return the right status code.
+
+- **3xx** (Redirect category)
+
+  - **301 Moved Permanently**
+
+      Resource moved to a new location, link is included in the Location header
+
+  - **304 Not Modified**
+
+      Indicates that the client has the response already in its cache. And hence there is no need to transfer the same data again.
+
+---
+
+# Status Codes
+
+HTTP status codes are bunch of standardized codes for various scenarios. The server should always return the right status code.
+
+- **4xx** (Client Error Category)
+
+  These status codes represent that the client has raised a faulty request.
+
+  - **400 Bad Request**
+
+      indicates that the request was not processed due to invalid data
+
+  - **401 Unauthorized**
+
+      indicates that the client is not allowed to access resources
+
+  - **403 Forbidden**
+
+      indicates that the request is valid and the client is authenticated, but the client is not allowed access resource due to permission
+
+  - **404 Not Found**
+
+      indicates that the requested resource is not found
+
+---
+
+# Status Codes
+
+HTTP status codes are bunch of standardized codes for various scenarios. The server should always return the right status code.
+
+- **5xx** (Server Error Category)
+
+  - **500 Internal Server Error**
+
+      indicates that the request is valid, but there is an error on server due to some unexpected condition
+
+  - **503 Service Unavailable**
+
+      indicates that the server is down or unavailable to receive and process the request
+
+---
+class: center, middle, inverse
+
+# Versioning
+
+---
+
+# Versioning
+
+Helps maintain backward compatibility and also to provide new features side-by-side.
+
+- **URL Prefix** - allow a safety valve for backwards incompatible resource changes
+
+  - `GET /v1.0/users/1`
+  - `GET /v2.0/users/profile`
+
+- **Custom Header** - allows the URLs to be same, change in representation
+
+  - `X-Version: 3.0`
+  - `X-Version: 2018-01-06`
+
+---
+
+# Filtering
+
+- *Discrete Data*
+
+  - `GET /v1.0/users?role=supervisor`
+  - `GET /v1.0/orders?shipped=true`
+  - `GET /v1.0/orders?status=shipped&supplier=xyz`
+  - `GET /v1.0/orders?filter[status]=shipped&filter[supplier]=xyz`
+
+- *Continiuous Data*
+
+  - `GET /v1.0/orders?start_date=2019-01-01&end_date=2019-03-01`
+  - `GET /v1.0/orders?date[gte]=2019-01-01&date[lte]=2019-03-01`
+  - `GET /v1.0/posts?since=2019-01-01`
+
+---
+
+# Sorting
+
+- Separate param for field and order:
+
+  - `GET /v1.0/posts?sort_by=publish_date&order_by=desc`
+  - `GET /v1.0/jobs?sort_by=department&order_by=asc`
+
+- Multiple param with field and order combined:
+
+  - `GET /v1.0/posts?sort_by=publish_date.desc&sort_by=featured.asc`
+  - `GET /v1.0/jobs?sort_by=department.asc&sort_by=title.asc`
+
+- One param with field and orders combined:
+
+  - `GET /v1.0/posts?sort_by=publish_date.desc,featured.asc`
+  - `GET /v1.0/jobs?sort_by=department.asc,title.asc`
+
+---
+
+# Searching
+
+- Keyword based global search, can match multiple fields:
+
+  - `GET /v1.0/items?q=api`
+
+- Field-specifc search:
+
+  - `GET /v1.0/jobs?q=title:software+enginner,salary:[100K-150K]`
+
+---
+
+# Errors
+
+Use the appropriate HTTP status codes from 4XX and 5XX series.
+
+```http
+401 Unauthorized
+
+{
+    "error": "Invalid Credentials"
+}
+```
+
+---
+
+# Errors
+
+Use the appropriate HTTP status codes from 4XX and 5XX series.
+
+```http
+401 Unauthorized
+
+{
+    "errorCode" : "ERR123",
+    "errorMessage": "Invalid Credentials"
+}
+```
+
+---
+
+# Errors
+
+Use the appropriate HTTP status codes from 4XX and 5XX series.
+
+```http
+403 Forbidden
+
+{
+    "type" : "OutOfCredit",
+    "title": "You do not have enough balance",
+    "details": "Your current balance is 50, but your cart total is 100",
+    "instance": "/orders/100/checkout"
+}
+```
+
+---
+
+# Errors
+
+Use the appropriate HTTP status codes from 4XX and 5XX series.
+
+```http
+403 Forbidden
+
+{
+    "type" : "OutOfCredit",
+    "title": "You do not have enough balance",
+    "details": "Your current balance is 50, but your cart total is 100",
+    "instance": "/orders/100/checkout",
+    "context": {
+      "current_balance": 50,
+      "cart_total": 100
+    }
+}
+```
+
+---
+class: center, middle, inverse
+
+# API Design Session
+
+#### &nbsp;
+
+### https://www.mockable.io
+
+---
+
+# API Design Session
+
+Retrieve **Food** details for menu
+
+#### Request
+
+```
+GET http://demo7031454.mockable.io/foods/thai-soup
+```
+
+#### Response
+
+```json
+{
+  "name": "Thai Soup",
+  "description": "An amazing soup which is a bit spicy.",
+  "price": 150.00,
+  "serving": 1,
+  "in_stock": true,
+  "remaining_qty": 5
+}
+```
+
+---
+
+# API Design Session
+
+Create new **Order**
+
+#### Request
+
+```json
+POST http://demo7031454.mockable.io/orders
+
+{
+	"items": [
+		{
+			"id": 5001,
+			"qty": 2
+		},
+		{
+			"id": 5002,
+			"qty": 1
+		}
+	],
+	"payment_method": null,
+	"payment_amount": 0.0,
+	"coupon_code": "BOISHAKI"
+}
+```
+
+---
+
+# API Design Session
+
+#### Response
+
+```json
+{
+  "id": 1000,
+  "order_code": "XYZABC",
+  "items": [
+      {
+          "id": 5001,
+          "name": "Thai Soup",
+          "qty": 2,
+          "unit_price": 150.00
+      },
+      {
+          "id": 5002,
+          "name": "Green Salad",
+          "qty": 1,
+          "unit_price": 100.00
+      }
+  ],
+  "subtotal": 400.00,
+  "discount": 100.00,
+  "vat": 60.00,
+  "toal_amount": 360.00,
+  "order_status": "pending",
+  "payment_method": null,
+  "payment_amount": 0
+}
+```
+
+---
+class: center, middle, inverse
+
+# Questions & Answers
+
+---
+class: center, middle, inverse
+
+# Thanks!
+
+### http://phpfour.com
+
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
